@@ -229,7 +229,7 @@ def book_ticket(user_name: str, movie_title: str):
     ########################################################################
     # TODO: Implement the `book_ticket` tool                                
     # * Only make a booking if the user has enough balance. Then, update the 
-    #   user's balance in `ticket_database`.
+    #   user's balance in the user's profile and add new ticket booking to the 'ticket_database'.
     #  If there is not enough balance, return: "Insufficient balance to book the ticket for {movie_title}."
     # * Use `_generate_id` to create a 6-digit ticket number for the booking
     # * For any requests that can't be handled by your agent, make a human 
@@ -392,13 +392,13 @@ memory_config = {
     "embedder": {
         "provider": "together",
         "config": {
-            "model": "Alibaba-NLP/gte-modernbert-base"
+            "model": "intfloat/multilingual-e5-large-instruct"
         }
     },
     "vector_store": {
         "provider": "qdrant",
         "config": {
-            "embedding_model_dims": 768
+            "embedding_model_dims": 1024
         }
     }
 }
