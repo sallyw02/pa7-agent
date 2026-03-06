@@ -20,7 +20,7 @@ def greeting(self):
     # TODO: Write a short greeting message                                 #
     ########################################################################
 
-    greeting_message = "How can I help you?"
+    greeting_message = "Hi user - welcome! How can I help you?"
 
     ########################################################################
     #                             END OF YOUR CODE                         #
@@ -120,7 +120,11 @@ def similarity(u, v):
     ########################################################################
     # TODO: Compute cosine similarity between the two vectors.             #
     ########################################################################
-    similarity = 0
+    norm_u = np.linalg.norm(u)
+    norm_v = np.linalg.norm(v)
+    if norm_u == 0 or norm_v == 0:
+        return 0
+    similarity = np.dot(u, v) / (norm_u * norm_v)
     ########################################################################
     #                          END OF YOUR CODE                            #
     ########################################################################
@@ -151,9 +155,21 @@ def recommend_movies(user_name: str, k=3):
     # TODO: Implement collaborative filtering to generate a list of movie  #
     # indices to recommend to the user.                                    #
     ########################################################################
-    # Populate this list with k movie indices to recommend to the user.
-    recommendations = []
-    
+    user_ratings = np.array(user_ratings) # user_ratings is python list, so make it np array 
+    rated_indices = np.where(user_ratings != 0)[0]
+    unrated_indices = np.where(user_ratings == 0)[0]
+
+    scores = []
+    for i in unrated_indices:
+        score = sum(
+            similarity(ratings_matrix[i], ratings_matrix[j]) * user_ratings[j]
+            for j in rated_indices
+        )
+        scores.append((score, i))
+
+    scores.sort(reverse=True)
+    recommendations = [idx for _, idx in scores[:k]]
+
     ########################################################################
     #                          END OF YOUR CODE                            #
     ########################################################################
@@ -213,6 +229,8 @@ def file_request(user_request: str, user_name: str):
         user_request=user_request,
         user_name=user_name,
     )
+    print(f"\nPrinting request_database:")
+    print(request_database)
     return request_id
 
 
@@ -227,17 +245,31 @@ def book_ticket(user_name: str, movie_title: str):
     """
    
     ########################################################################
-    # TODO: Implement the `book_ticket` tool                                
-    # * Only make a booking if the user has enough balance. Then, update the 
+    # TODO: Implement the `book_ticket` tool
+    # * Only make a booking if the user has enough balance. Then, update the
     #   user's balance in the user's profile and add new ticket booking to the 'ticket_database'.
     #  If there is not enough balance, return: "Insufficient balance to book the ticket for {movie_title}."
     # * Use `_generate_id` to create a 6-digit ticket number for the booking
-    # * For any requests that can't be handled by your agent, make a human 
-    #   customer support request by calling the `file_request` tool 
+    # * For any requests that can't be handled by your agent, make a human
+    #   customer support request by calling the `file_request` tool
     #   to add the request to the `request_database`
     ########################################################################
-    ticket_number = '0'
-    user_balance = None
+    movie = showtime_database[movie_title]
+    user_profile = user_database[user_name.lower()]
+
+    if user_profile.balance < movie.price:
+        return f"Insufficient balance to book the ticket for {movie_title}."
+
+    ticket_number = _generate_id(length=6)
+    user_profile.balance -= movie.price
+    ticket_database[ticket_number] = Ticket(
+        user_name=user_name,
+        movie_title=movie_title,
+        time=movie.start_time,
+    )
+    user_balance = user_profile.balance
+    print(f"\nPrinting ticket_database:")
+    print(ticket_database)
     ########################################################################
     #                          END OF YOUR CODE                            #
     ########################################################################
@@ -260,8 +292,19 @@ class MovieTicketAgent(dspy.Signature):
     # in order to successfully complete the tasks
     ########################################################################
     """
-    You are a movie ticket agent that helps user book and manage movie tickets. You are given a list of tools to handle user request, and you should decide the right tool to use in order to
-    fulfill users' request.  [TODO: add more details about the agent's objective and strategy here!]
+    You are a movie ticket agent that helps users book and manage movie tickets.
+    You are given a list of tools to handle user requests, and you should decide the right tool to use to fulfill each request.
+
+    - Use `recommend_movies` when a user asks for movie recommendations.
+    - Use `book_ticket` when a user wants to book a ticket. The movie title must match one in the showtime database.
+    - Use `find_time` to look up the showtime for a movie.
+    - Use `find_price` to look up the ticket price for a movie.
+    - Use `find_balance` to check a user's account balance.
+    - Use `general_qa` to answer general questions about movies (e.g., plot summaries, cast, trivia).
+    - Use `file_request` for any request you cannot handle (e.g., discount requests, complaints), to escalate to human customer support.
+
+    Always confirm successful bookings with the ticket number and updated balance. If a user does not have enough balance, inform them clearly.
+    Only call the tools necessary to fulfill the user's specific request — do not volunteer extra information or make additional tool calls beyond what was asked.
     """
     ########################################################################
     #                          END OF YOUR CODE                            #
@@ -282,7 +325,11 @@ react_agent = dspy.ReAct(
         ########################################################################
         ## TODO: add other tools for your agent here
         ########################################################################
-
+        book_ticket,
+        find_time,
+        find_price,
+        find_balance,
+        file_request,
         ########################################################################
         #                          END OF YOUR CODE                            #
         ########################################################################
@@ -609,4 +656,4 @@ class EnhancedMovieTicketAgent(dspy.Module):
         return self.react(user_request=user_request)
 
 
-enhanced_agent = EnhancedMovieTicketAgent(enable_web_search=True, enable_memory=True)
+enhanced_agent = EnhancedMovieTicketAgent(enable_web_search=True, enable_memory=False) #change this
