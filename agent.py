@@ -478,7 +478,7 @@ class MemoryTools:
             # Hint: It may be helpful to review mem0's memory operations here:
             # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
-            self.memory.add(user_id = user_id, content = content)
+            self.memory.add(content, user_id = user_id)
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
