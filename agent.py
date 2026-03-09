@@ -478,7 +478,7 @@ class MemoryTools:
             # Hint: It may be helpful to review mem0's memory operations here:
             # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
-            pass
+            self.memory.add(user_id = user_id, content = content)
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
@@ -519,7 +519,7 @@ class MemoryTools:
             # Hint: it would be helpful to read the documentation of 
             # mem0 to see how to use the `search` method: https://github.com/mem0ai/mem0
             ########################################################################
-            results = None
+            results = self.memory.search(query, user_id = user_id, limit = limit)
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
@@ -550,7 +550,7 @@ class MemoryTools:
             # Hint: It may be helpful to review mem0's memory operations here:
             # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
-            pass
+            self.memory.update(memory_id, new_content)
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
@@ -566,7 +566,7 @@ class MemoryTools:
             # Hint: It may be helpful to review mem0's memory operations here:
             # https://docs.mem0.ai/core-concepts/memory-operations
             ########################################################################
-            pass
+            self.memory.delete(memory_id)
             ########################################################################
             #                          END OF YOUR CODE                            #
             ########################################################################
@@ -628,18 +628,27 @@ class EnhancedMovieTicketAgent(dspy.Module):
         # TODO: Add tools for the base agent, as well as web search and memory 
         # if they are enabled
         ########################################################################
-        # TODO: Add tools for the base agent
-        self.tools = []
-
-        # enable web search
-        if self.web_tools: 
-            # TODO: add web search tool to self.tools and delete `pass`
-            pass
+        self.tools = [
+            recommend_movies,
+            general_qa,
+            book_ticket,
+            find_time,
+            find_price,
+            find_balance,
+            file_request,
+        ]
         
+        if self.web_tools:
+            self.tools.append(self.web_tools.web_search)
         # add memory tools if enabled
         if self.memory_tools:
-            # TODO: add the relevant memory tools here and delete `pass`
-            pass
+            self.tools.extend([
+                self.memory_tools.store_memory,
+                self.memory_tools.search_memories,
+                self.memory_tools.get_all_memories,
+                self.memory_tools.update_memory,
+                self.memory_tools.delete_memory,
+            ])
        
         ########################################################################
         #                          END OF YOUR CODE                            #
@@ -656,4 +665,4 @@ class EnhancedMovieTicketAgent(dspy.Module):
         return self.react(user_request=user_request)
 
 
-enhanced_agent = EnhancedMovieTicketAgent(enable_web_search=True, enable_memory=False) #change this
+enhanced_agent = EnhancedMovieTicketAgent(enable_web_search = True, enable_memory = True) #change this

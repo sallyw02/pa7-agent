@@ -63,7 +63,7 @@ TOGETHER_API_KEY = "enter your api key here"
 For part 2 of the assignment, you will add web search functions to the agent. There are many search APIs out there that are free for low-volume usage. For this assignment, we will be using the Bing Search API through [SerpAPI](https://serpapi.com/bing-search-api?gad_source=1&gad_campaignid=22795996758&gbraid=0AAAAADD8kqMYKIj4OU0jh5T2CDRegl0W8&gclid=CjwKCAiAlfvIBhA6EiwAcErpyVhlhSJIBshjm4vojNUuHzVO7x4PzQEA9kT4l5ys2SvhmvcRFnZTERoCxw4QAvD_BwE).
 To get an API key, one group member will need to register a free account, click subscribe, then go to the dashboard [here](https://serpapi.com/manage-api-key) to get your API key. After you generate the key, please enter it into the string in `api_keys.py`:
 ```
-SERPAPI_API_KEY = "enter your api key here"
+SERPAPI_API_KEY = 0fff36310a3a3be3fd6b5e547b284f2f3e172a046d685defd93bb525c3af7517
 ```
 
 You will get 250 searches with a free account. **We will use your SerpAPI key to run the autograder on your submission for Part 2 of the assignment, so ensure you have at least 5 searches left.**
