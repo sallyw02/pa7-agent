@@ -1,7 +1,7 @@
 import os
 from api_keys import TOGETHER_API_KEY, SERPAPI_API_KEY
 
-os.environ["TOGETHER_API_KEY"] = 9a36941f6b03f86ea303a605c411d0fd730f8bc6de2fe2b550c54ba0a3edf361
+os.environ["TOGETHER_API_KEY"] = TOGETHER_API_KEY
 os.environ["SERPAPI_API_KEY"] = SERPAPI_API_KEY
 
 def test_together_key():
