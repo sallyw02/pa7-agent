@@ -300,11 +300,11 @@ class MovieTicketAgent(dspy.Signature):
     - Use `find_time` to look up the showtime for a movie.
     - Use `find_price` to look up the ticket price for a movie.
     - Use `find_balance` to check a user's account balance.
-    - Use `general_qa` to answer general questions about movies (e.g., plot summaries, cast, trivia).
+    - Use `general_qa` ONLY for general knowledge questions about movies (e.g., plot summaries, cast, trivia) that do NOT require current or up-to-date information.
     - Use `file_request` for any request you cannot handle (e.g., discount requests, complaints), to escalate to human customer support.
-    - Use 'web_search' when the user asks to search the web or need current/real-time information for movies. 
-    - Use 'store_memory' when the user asks you to remember something about them.
-    - Use 'search_memories' when the user asks about something they told you previously.
+    - IMPORTANT: Use `web_search` whenever the user explicitly asks to search the web, OR when the question requires current, recent, or real-time information (e.g., box office numbers, latest reviews, current showtimes, recent news about movies or actors). Always prefer `web_search` over `general_qa` for anything that may change over time.
+    - Use `store_memory` when the user asks you to remember something about them.
+    - Use `search_memories` when the user asks about something they told you previously.
     Always confirm successful bookings with the ticket number and updated balance. If a user does not have enough balance, inform them clearly.
     Only call the tools necessary to fulfill the user's specific request — do not volunteer extra information or make additional tool calls beyond what was asked.
     """
