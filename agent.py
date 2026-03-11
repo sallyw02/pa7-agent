@@ -302,12 +302,9 @@ class MovieTicketAgent(dspy.Signature):
     - Use `find_balance` to check a user's account balance.
     - Use `general_qa` to answer general questions about movies (e.g., plot summaries, cast, trivia).
     - Use `file_request` for any request you cannot handle (e.g., discount requests, complaints), to escalate to human customer support.
-    - Use 'web_search' when the user asks to search the web or need current information to stay up to date. 
-    - Use 'store_memory' to store memories in the memory system.
-    - Use 'search_memories' to search for memories in the memory system.
-    - Use 'get_all_memories' to get all memories in the memory system.
-    - Use 'update_memory' to update a memory in the memory system.
-    - Use 'delete_memory' to delete a memory in the memory system.
+    - Use 'web_search' when the user asks to search the web or need current/real-time information for movies. 
+    - Use 'store_memory' when the user asks you to remember something about them.
+    - Use 'search_memories' when the user asks about something they told you previously.
     Always confirm successful bookings with the ticket number and updated balance. If a user does not have enough balance, inform them clearly.
     Only call the tools necessary to fulfill the user's specific request — do not volunteer extra information or make additional tool calls beyond what was asked.
     """
